@@ -409,24 +409,53 @@ public class DVR {
 			return false;
 		}
 	}
-
 	public static void display() {
-		System.out.print("In progress");
-
-		for(Node eachNode:nodes) {
+		TableBuilder tb = new TableBuilder();
+		tb.addRow("Destination Server ID","Next Hop Server ID","Cost");
+		Collections.sort(nodes,new NodeComparator());
+		for(Node eachNode:nodes){
 			int cost = routingTable.get(eachNode);
-			System.out.print(" "+ eachNode);
-			System.out.print(" I " + cost);
+			String costStr = ""+cost;
+			if(cost==Integer.MAX_VALUE-2){
+				costStr = "infinity";
+			}
+			String nextHopID = "N.A";
+			if(nextHop.get(eachNode)!=null){
+				nextHopID = ""+nextHop.get(eachNode).getId();
+			}
+			tb.addRow(""+eachNode.getId(),""+nextHopID,costStr);
 		}
-
-		String[] temp1 = {"Destination Server ID","Next Hop Server ID","Cost"};
-
+		System.out.println(tb.toString());
 	}
-
-	//String[] temp = {"Destination Server ID","Next Hop Server ID","Cost"};
 
 
 }
+
+class NodeComparator implements Comparator<Node> {
+	@Override
+	public int compare(Node n1, Node n2) {
+		Integer id1 = n1.getId();
+		Integer id2 = n2.getId();
+		return id1.compareTo(id2);
+	}
+}
+//	public static void display() {
+//		System.out.print("In progress");
+//
+//		for(Node eachNode:nodes) {
+//			int cost = routingTable.get(eachNode);
+//			System.out.print(" "+ eachNode);
+//			System.out.print(" I " + cost);
+//		}
+//
+//		String[] temp1 = {"Destination Server ID","Next Hop Server ID","Cost"};
+//
+//	}
+//
+//	//String[] temp = {"Destination Server ID","Next Hop Server ID","Cost"};
+//
+//
+//}
 //	TableBuilder tb = new TableBuilder();
 //	String[] temp = {"Destination Server ID","Next Hop Server ID","Cost"};
 //	//tb.addRow(temp);
@@ -441,8 +470,8 @@ public class DVR {
 //	}
 //	System.out.println(tb.toString());
 // }
-
-
+//
+//
 //class NodeComparator implements Comparator {
 //	@Override public int compare(Node n1, Node n2) {
 //	Integer id1 = n1.getId();

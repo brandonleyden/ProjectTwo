@@ -1,7 +1,7 @@
 import java.util.LinkedList;
 import java.util.List;
  
-import org.apache.commons.lang3.StringUtils;
+//import org.apache.commons.lang3.StringUtils;
  
 public class TableBuilder
 {
@@ -11,7 +11,7 @@ public class TableBuilder
     {
         rows.add(cols);
     }
- 
+
     private int[] colWidths()
     {
         int cols = -1;
