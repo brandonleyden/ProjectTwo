@@ -50,8 +50,8 @@ public class DVR {
 
 		read = Selector.open();
 		write = Selector.open();
-		Server server = new Server(Integer.parseInt(args[0]));
-		//Server server = new Server(2000);
+		//Server server = new Server(Integer.parseInt(args[0]));
+		Server server = new Server(2000);
 		server.start();
 		System.out.println("Server started running...");
 		Client client = new Client();
@@ -411,7 +411,8 @@ public class DVR {
 	}
 	public static void display() {
 		TableBuilder tb = new TableBuilder();
-		tb.addRow("Destination Server ID","Next Hop Server ID","Cost");
+		String[] temp = {"Destination Server ID","Next Hop Server ID","Cost"};
+		tb.addRow(temp);
 		Collections.sort(nodes,new NodeComparator());
 		for(Node eachNode:nodes){
 			int cost = routingTable.get(eachNode);
@@ -423,7 +424,8 @@ public class DVR {
 			if(nextHop.get(eachNode)!=null){
 				nextHopID = ""+nextHop.get(eachNode).getId();
 			}
-			tb.addRow(""+eachNode.getId(),""+nextHopID,costStr);
+			String[] temp2 = {""+eachNode.getId(),""+nextHopID,costStr};
+			tb.addRow(temp2);
 		}
 		System.out.println(tb.toString());
 	}
