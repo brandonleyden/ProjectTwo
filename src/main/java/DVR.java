@@ -148,7 +148,7 @@ public class DVR {
 						for (Node eachNeighbor : neighbors) {
 							disable(eachNeighbor);
 						}
-						System.out.println("Bubyee!! Thank you.");
+						System.out.println("Quitting");
 						timer.cancel();
 						System.exit(1);
 					} else
