@@ -47,55 +47,54 @@ public class DVR {
 	public static Map<Node, Node> nextHop = new HashMap<Node, Node>();
 
 	public static void main(String[] args) throws IOException {
-
+		//Selector Network I/O
 		read = Selector.open();
 		write = Selector.open();
-		//Server server = new Server(Integer.parseInt(args[0]));
 		Server server = new Server(2000);
 		server.start();
-		System.out.println("Server started running...");
+		System.out.println("Starting Server");
 		Client client = new Client();
 		client.start();
-		System.out.println("Client started running...");
+		System.out.println("Starting Client");
 		myIP = getMyLanIP();
 
 		Timer timer = new Timer();
 		Scanner in = new Scanner(System.in);
 		boolean run = true;
-		boolean serverCommandInput = false;
+		boolean Connected = false;
 		while (run) {
-			System.out.println("\n");
-			System.out.println("*********Distance Vector Routing Protocol**********");
-			System.out.println("Help Menu");
-			System.out.println("--> Commands you can use");
-			System.out.println("1. server <topology-file> -i <time-interval-in-seconds>");
-			System.out.println("2. update <server-id1> <server-id2> <new-cost>");
-			System.out.println("3. step");
-			System.out.println("4. display");
-			System.out.println("5. disable <server-id>");
-			System.out.println("6. crash");
 			String line = in.nextLine();
+			System.out.println("\n");
+			System.out.println("--------------Distance Vector Routing Protocol--------------");
+			System.out.println("Help Menu");
+			System.out.println("*Commands you can use*");
+			System.out.println("server <topology-file> -i <time-interval-in-seconds>");
+			System.out.println("update <server-id1> <server-id2> <new-cost>");
+			System.out.println("step");
+			System.out.println("display");
+			System.out.println("disable <server-id>");
+			System.out.println("crash");
 			String[] arguments = line.split(" ");
 			String command = arguments[0];
 			switch (command) {
 				case "server": //server <topology-file-name> -i <routing-update-interval>
 					if (arguments.length != 4) {
-						System.out.println("Incorrect command. Please try again.");
+						System.out.println("Incorrect command. Please try again");
 						break;
 					}
 					try {
 						if (Integer.parseInt(arguments[3]) < 15) {
-							System.out.println("Please input routing update interval above 15 seconds.");
+							System.out.println("Error. Input routing update interval above 15 seconds");
 						}
 					} catch (NumberFormatException nfe) {
-						System.out.println("Please input an integer for routing update interval.");
+						System.out.println("Input an int for routing update interval");
 						break;
 					}
 					if ((arguments[1] == "" || arguments[2] == "" || !arguments[2].equals("-i") || arguments[3] == "")) {
-						System.out.println("Incorrect command. Please try again.");
+						System.out.println("Incorrect command. Please try again");
 						break;
 					} else {
-						serverCommandInput = true;
+						Connected = true;
 						String filename = arguments[1];
 						time = Integer.parseInt(arguments[3]);
 						readTopology(filename);
@@ -112,39 +111,39 @@ public class DVR {
 					}
 					break;
 				case "update": //update <server-id1> <server-id2> <link Cost>
-					if (serverCommandInput)
+					if (Connected)
 						update(Integer.parseInt(arguments[1]), Integer.parseInt(arguments[2]), Integer.parseInt(arguments[3]));
 					else
 						System.out.println("Please input the server command. Thank you.");
 					break;
 				case "step":
-					if (serverCommandInput)
+					if (Connected)
 						step();
 					else
-						System.out.println("Please input the server command. Thank you.");
+						System.out.println("Please input the server command");
 					break;
 				case "packets":
-					if (serverCommandInput)
-						System.out.println("Number of packets received yet = " + numberOfPacketsReceived);
+					if (Connected)
+						System.out.println("Number of packets received = " + numberOfPacketsReceived);
 					else
-						System.out.println("Please input the server command. Thank you.");
+						System.out.println("Please input the server command");
 					break;
 				case "display":
-					if (serverCommandInput)
+					if (Connected)
 						display();
 					else
-						System.out.println("Please input the server command. Thank you.");
+						System.out.println("Please input the server command");
 					break;
 				case "disable":
-					if (serverCommandInput) {
+					if (Connected) {
 						int id = Integer.parseInt(arguments[1]);
 						Node disableServer = getNodeById(id);
 						disable(disableServer);
 					} else
-						System.out.println("Please input the server command. Thank you.");
+						System.out.println("Please input the server command");
 					break;
 				case "crash":
-					if (serverCommandInput) {
+					if (Connected) {
 						run = false;
 						for (Node eachNeighbor : neighbors) {
 							disable(eachNeighbor);
@@ -153,10 +152,10 @@ public class DVR {
 						timer.cancel();
 						System.exit(1);
 					} else
-						System.out.println("Please input the server command. Thank you.");
+						System.out.println("Please input the server command");
 					break;
 				default:
-					System.out.println("Wrong command! Please check again.");
+					System.out.println("Wrong command. Please try again");
 			}
 		}
 		in.close();
@@ -171,6 +170,7 @@ public class DVR {
 					continue;
 
 				Enumeration<InetAddress> addresses = iface.getInetAddresses();
+				//Loop through address until we get our ipv4 address
 				while (addresses.hasMoreElements()) {
 					InetAddress addr = addresses.nextElement();
 
@@ -194,9 +194,12 @@ public class DVR {
 			for (int i = 0; i < numberOfServers; i++) {
 				String line = scanner.nextLine();
 				String[] parts = line.split(" ");
+				//create node with the server id, IP address, and port
 				Node node = new Node(Integer.parseInt(parts[0]), parts[1], Integer.parseInt(parts[2]));
 				nodes.add(node);
+				//cost initialized as infinity
 				int cost = Integer.MAX_VALUE - 2;
+				//reading self node
 				if (parts[1].equals(myIP)) {
 					myID = Integer.parseInt(parts[0]);
 					myNode = node;
@@ -205,21 +208,27 @@ public class DVR {
 				} else {
 					nextHop.put(node, null);
 				}
+				//add to routing table
 				routingTable.put(node, cost);
+				//connect to each node
 				connect(parts[1], Integer.parseInt(parts[2]), myID);
 			}
+			//loop through neighbors
 			for (int i = 0; i < numberOfNeighbors; i++) {
 				String line = scanner.nextLine();
 				String[] parts = line.split(" ");
+				//server id, neighbor id, cost
 				int fromID = Integer.parseInt(parts[0]);
 				int toID = Integer.parseInt(parts[1]);
 				int cost = Integer.parseInt(parts[2]);
+				//if fromID is our node, update our neighbor and next hop table
 				if (fromID == myID) {
 					Node to = getNodeById(toID);
 					routingTable.put(to, cost);
 					neighbors.add(to);
 					nextHop.put(to, to);
 				}
+				//if toID is our Node, update our neighbor and nexthop table
 				if (toID == myID) {
 					Node from = getNodeById(fromID);
 					routingTable.put(from, cost);
@@ -234,8 +243,7 @@ public class DVR {
 		}
 
 	}
-
-
+	//returns node object from id by looping through nodes list
 	public static Node getNodeById(int id) {
 		for (Node node : nodes) {
 			if (node.getId() == id) {
@@ -327,9 +335,9 @@ public class DVR {
 			message.setRoutingTable(makeMessage());
 			for (Node eachNeighbor : neighbors) {
 				sendMessage(eachNeighbor, message); //sending message to each neighbor
-				System.out.println("Message sent to " + eachNeighbor.getIpAddress() + "!");
+				System.out.println("Message sent to " + eachNeighbor.getIpAddress());
 			}
-			System.out.println("Step SUCCESS");
+			System.out.println("success");
 		} else {
 			System.out.println("Sorry. No neighbors found to execute the step command.");
 		}
