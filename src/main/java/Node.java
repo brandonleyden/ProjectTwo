@@ -1,9 +1,12 @@
 import java.io.Serializable;
+
 public class Node implements Serializable{
+
 	private static final long serialVersionUID = 1L;
-	private int id;
 	private String ipAddress;
 	private int port;
+	private int id;
+
 	
 	public Node(int id, String ipAddress,int port) {
 		this.id = id;
@@ -11,46 +14,33 @@ public class Node implements Serializable{
 		this.port = port;
 	}
 
-	
-	public int getId() {
-		return id;
-	}
-
 
 	public void setId(int id) {
 		this.id = id;
 	}
 
-
-	public String getIpAddress() {
-		return ipAddress;
+	public int getId() {
+		return id;
 	}
 
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
 	}
 
-	
-	public int getPort() {
-		return port;
+	public String getIpAddress() {
+		return ipAddress;
 	}
 
 	public void setPort(int port) {
 		this.port = port;
 	}
 
-	//Dont think we need this
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		result = prime * result + ((ipAddress == null) ? 0 : ipAddress.hashCode());
-		result = prime * result + port;
-		return result;
+	public int getPort() {
+		return port;
 	}
 
 
+	//Checks object going into equals against multiple conditions
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -71,5 +61,18 @@ public class Node implements Serializable{
 			return false;
 		return true;
 	}
+
+	/*@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		result = prime * result + ((ipAddress == null) ? 0 : ipAddress.hashCode());
+		result = prime * result + port;
+		return result;
+	} */
+
+
+
 	
 }

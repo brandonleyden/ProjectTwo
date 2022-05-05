@@ -7,6 +7,8 @@ public class TableBuilder
 {
     List<String[]> rows = new LinkedList<String[]>();
 
+
+    //Takes in a string array and add it to the rows list
     public void addRow(String[] cols)
     {
         rows.add(cols);
@@ -14,45 +16,47 @@ public class TableBuilder
 
     private int[] colWidths()
     {
-        int cols = -1;
+        int columns = -1;
  
         for(String[] row : rows)
-            cols = Math.max(cols, row.length);
+            columns = Math.max(columns, row.length);
  
-        int[] widths = new int[cols];
+        int[] widths = new int[columns];
  
         for(String[] row : rows) {
-            for(int colNum = 0; colNum < row.length; colNum++) {
-                widths[colNum] =
+            for(int columnsNum = 0; columnsNum < row.length; columnsNum++) {
+                widths[columnsNum] =
                     Math.max(
-                        widths[colNum],
-                        StringUtils.length(row[colNum]));
+                        widths[columnsNum],
+                        StringUtils.length(row[columnsNum]));
             }
         }
  
         return widths;
     }
- 
+
+
+    //Builds the table
     @Override
     public String toString()
     {
-        StringBuilder buf = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
  
         int[] colWidths = colWidths();
  
         for(String[] row : rows) {
-            for(int colNum = 0; colNum < row.length; colNum++) {
-                buf.append(
+            for(int columnsNum = 0; columnsNum < row.length; columnsNum++) {
+                stringBuilder.append(
                     StringUtils.rightPad(
                         StringUtils.defaultString(
-                            row[colNum]), colWidths[colNum]));
-                buf.append(' ');
+                            row[columnsNum]), colWidths[columnsNum]));
+                stringBuilder.append(' ');
             }
- 
-            buf.append('\n');
+
+            stringBuilder.append('\n');
         }
  
-        return buf.toString();
+        return stringBuilder.toString();
     }
  
 }

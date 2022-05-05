@@ -9,18 +9,26 @@ import java.nio.channels.SocketChannel;
 
 public class Server extends Thread{
     private int port = 0;
+
     public Server(int port)
     {
         this.port = port;
     }
+
     public void run() {
         try
         {
+            //Open DVR selectors read and write
             DVR.read = Selector.open();
             DVR.write = Selector.open();
+
+            //Open Server Socket Channel
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.configureBlocking(false);
+
+            //Bind the Socket Address with the port to the socket channel
             serverSocketChannel.bind(new InetSocketAddress(port));
+
             while(true)
             {
                 SocketChannel socketChannel=serverSocketChannel.accept();
